@@ -34,7 +34,7 @@ The full inherited inventory is `media/doc/3rd Party Files.txt`. The list above 
 | SQLite | https://github.com/sqlite/sqlite | Public domain for core code | Package metadata, search indexes, settings/catalog databases | P1 | Keep databases out of kernel mode; review build scripts and optional extensions separately |
 | libarchive | https://github.com/libarchive/libarchive | BSD-style | Archive reading/writing for file manager, updater and recovery tools | P1 | Enable only required formats and dependencies; validate malformed archives and path traversal |
 | libcurl | https://github.com/curl/curl | curl MIT-like license | HTTPS downloads, repository metadata, update service and diagnostics | P1 | Requires a working TLS backend, DNS and socket layer; license is SPDX `curl`, not literally MIT |
-| Scintilla + Lexilla | https://github.com/ScintillaOrg/scintilla and https://github.com/ScintillaOrg/lexilla | MIT | Editing component for a first-party text editor and script editor | P2 | Requires a working Win32 window/message, clipboard, font and accessibility path |
+| Scintilla + Lexilla | https://github.com/ScintillaOrg/scintilla and https://github.com/ScintillaOrg/lexilla | Historical Permission Notice and Disclaimer (HPND)-style permissive license; verify exact files | Editing component for a first-party text editor and script editor | P2 | Requires a working Win32 window/message, clipboard, font and accessibility path |
 | HarfBuzz | https://github.com/harfbuzz/harfbuzz | MIT | Complex-script shaping for the font/text stack | P2 | First check the current GDI/Uniscribe path and existing font stack; integrate only if a measurable gap remains |
 | SDL3 | https://github.com/libsdl-org/SDL | zlib | Multimedia/game/application API for optional user-mode apps | P2 | It is not a replacement for NT input, audio or graphics drivers; requires a tested platform backend |
 | Windows Terminal | https://github.com/microsoft/terminal | MIT | Reference and possible future terminal application | P3 | Depends on modern console/ConPTY and Windows UI facilities; not drop-in for the current shell |
@@ -42,15 +42,29 @@ The full inherited inventory is `media/doc/3rd Party Files.txt`. The list above 
 | Windows Driver Frameworks upstream | https://github.com/microsoft/Windows-Driver-Frameworks | MIT | Source reference for WDF behavior and future compatibility work | P2 | WDF is already present; compare revisions and port only missing functionality |
 | DXVK | https://github.com/doitsujin/dxvk | zlib | Optional Direct3D 8/9/10/11-to-Vulkan compatibility layer | P3 | Needs a functional Vulkan user-mode stack and compatible memory/synchronization primitives; not a native WDDM driver |
 
+| Project | Repository | License | Proposed role | Priority | Main caveat |
+|---|---|---|---|---|---|
+| Explorer++ | https://github.com/derceg/explorerplusplus | GPL-3.0 | Possible interim standalone file manager and Win32 compatibility test application | P2 | Not a desktop shell; validate required Win32 APIs, shell extensions and COM behavior before adoption |
+| 7-Zip | https://github.com/ip7z/7zip | LGPL-2.1-or-later for most files; selected BSD/public-domain files; unRAR restriction on RAR code | Archive engine or standalone archive utility | P2 | Keep restricted RAR decoder out unless its additional conditions are explicitly accepted; compare capabilities with libarchive before choosing one |
+| Nuklear | https://github.com/Immediate-Mode-UI/Nuklear | MIT or public domain, per upstream | Small embeddable immediate-mode UI for diagnostics and prototype tools | P2 | No window, input or renderer backend; not a retained-mode desktop framework |
+| ANGLE | https://github.com/google/angle | BSD-3-Clause | OpenGL ES / EGL and WebGL compatibility layer over available graphics APIs | P3 | Requires a working D3D, Vulkan or OpenGL backend; not a WDDM driver and not a substitute for Mesa |
+| SwiftShader | https://github.com/google/swiftshader | Apache-2.0; third_party components have separate terms | CPU-based Vulkan 1.3 implementation for fallback and conformance testing | P3 | Mesa already supplies software-rendering paths in the current configuration; avoid a duplicate renderer unless a specific Vulkan gap justifies it |
+| VKD3D | https://gitlab.winehq.org/wine/vkd3d | LGPL-2.1-or-later | Direct3D 12 API and shader translation over Vulkan | P3 | Depends on a mature Vulkan user-mode stack and shader/compiler integration; audit against existing D3D12 components first |
+| WinMerge | https://github.com/WinMerge/winmerge | GPL-2.0 | Optional developer/system utility for comparing files and directories | P3 | A separate application, not an OS subsystem; validate its Win32/COM dependencies |
+
 ### Candidate selection notes
 
 - SQLite, libarchive and libcurl are the strongest near-term additions because they support system utilities and product services without becoming part of the kernel.
-- Scintilla/Lexilla can provide a mature editing component without forcing a large UI framework into the OS.
+- Scintilla/Lexilla can provide a mature editing control without forcing a large UI framework into the OS; upstream describes the license as permissive and its Windows version is a native Win32 control.
 - HarfBuzz is a typography capability, not a complete UI toolkit.
 - SDL3 should be offered as an application/developer runtime after the input, audio and graphics paths are testable.
 - Windows Terminal and PowerShell are later-stage applications, not initial platform dependencies.
 - WDF must be audited in-place before any upstream code is imported.
-- DXVK is a compatibility layer for applications; it cannot replace the graphics kernel, display miniport or WDDM implementation.
+- DXVK and VKD3D are user-mode translation layers for applications; neither replaces the graphics kernel, display miniport or WDDM implementation.
+- Explorer++ can be evaluated as an interim file-manager application, but LiberNext's own session, shell and taskbar remain first-party components.
+- Nuklear is useful for small tools only after a rendering/input adapter exists; it does not provide a full desktop framework.
+- ANGLE and SwiftShader are optional graphics compatibility/fallback candidates. The current Mesa stack should be measured first to avoid unnecessary renderer duplication.
+- 7-Zip is an alternative archive backend/application, not an automatic addition alongside libarchive; its RAR-related files carry extra restrictions.
 
 ## 3. Reference-only or not suitable for direct import
 
