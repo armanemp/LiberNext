@@ -1,32 +1,44 @@
-# Rules for managing Pull Requests
+# Pull Request Management
 
-> **English** | [中文](translations/zh-CN/PULL_REQUEST_MANAGEMENT.md) | [Français](translations/fr-FR/PULL_REQUEST_MANAGEMENT.md) | [Español](translations/es-ES/PULL_REQUEST_MANAGEMENT.md) | [日本語](translations/ja-JP/PULL_REQUEST_MANAGEMENT.md) | [العربية](translations/ar-MA/PULL_REQUEST_MANAGEMENT.md) | [Українська](translations/uk-UA/PULL_REQUEST_MANAGEMENT.md)
+## Review principles
 
-For the sake of trying to maintain an acceptable number of open but idle PRs, the following rules should be considered:
-- If a PR has at least one approval, it can be merged after 1 week of waiting for additional comments.
-  - If the change has at least 3 approvals or you consider it trivial enough, it may be merged right away.
-- If a PR stays in "changes requested" for too long, and there is no indication from the author that they are working on it, it shall be closed.
-  - Rule of thumb: 2 weeks for a small PR. Can be longer if the PR is large.
-  - The PR can be reopened at any point, if you have additional comments, or new changes have been done.
-- If you require a review from a particular person, assign the PR to that person. Don't just rely on the "review requested" feature of GitHub.
-- Remember that PR labels exist. You can assign an appropriate label to a pull request to designate it's scope, grab additional attention or just for extra navigation possibilities.
-- Don't feel obliged to comment everything you see, just for the sake of commenting. Be it on GitHub, Discord or Matrix.
+- Keep pull requests focused and reviewable.
+- Do not merge a change solely because it builds; inspect the implementation and test evidence.
+- Prefer small, reversible steps for kernel, driver, boot, filesystem and build-system changes.
+- Preserve author attribution and all inherited copyright/license notices.
+- Keep upstream synchronization pull requests separate from product feature work.
+- Do not merge broad directory moves or global renames without a migration plan and before/after validation.
 
-In addition, in order to avoid coming off as rude to helpful contributors, please refrain from:
-- Asking the contributor to do unrelated work
-- Closing without providing a reason
-- Merging with the intention to rewrite that code soon after
+## Required review checklist
 
-Before merging a PR, make sure it follows the [contributing rules](CONTRIBUTING.md#rules-and-recommendations), but more importantly:
-- Make sure the author has specified a real e-mail in all PR commits
-- If PR contains code or translations, make sure the author has not specified a nickname or alias, but a full legal name in all PR commits
-- If PR contains media (wallpapers, themes, icons, sounds) or out-of-code documentation, make sure the author has specified the name or alias in all PR commits
-- If PR contains mixed code with media changes, handle it as PR with code
-- Important notes before using "Squash and merge" strategy on a PR:
-  - Make sure the author's name in GitHub profile matches one in commits. If this is not the case, ask the author to set it accordingly.
-  - If the author does not want to set the name in GitHub profile:
-    - "no squash merge" label needs to be added to a PR.
-	- Make sure every commit message is formatted correctly as in [.gitmessage](.gitmessage).
-	- Finally in this case a PR has to be merged either using "Rebase and merge" strategy or manually.
-  - By pressing "Squash and merge" button in a PR you can make sure the author does not use no-reply e-mail -
-  under the commit message there will be a text label saying: `This commit will be authored by <address@email.com>`
+Before merging, reviewers should verify:
+
+1. The PR describes the problem, root cause and intended behavior.
+2. The changed files belong to the stated modules and no unrelated files were added.
+3. Public interfaces and dependencies are documented.
+4. Source provenance, license compatibility and third-party notices are correct.
+5. Tests cover the changed behavior, including failure paths where practical.
+6. Kernel/driver changes include architecture, IRQL, locking, lifetime and memory-ordering review as applicable.
+7. Compatibility changes are compared against the Windows 11 reference environment.
+8. Build and runtime evidence is included.
+9. No secrets, credentials, private data or unlicensed content are present.
+10. The change does not silently alter feed revisions or generated outputs.
+
+## Contributor identity
+
+This repository permits contributor pseudonyms and GitHub noreply email addresses under CONTRIBUTING.md. Reviewers must not require an upstream LiberNT identity policy for contributions made only to this fork. This does not remove the contributor's responsibility to have rights to submit the work and preserve accurate authorship/provenance.
+
+## Upstream synchronization
+
+- Prepare LiberNT updates on an isolated upstream-sync branch.
+- Prepare ReactOS-origin changes separately and cherry-pick only after conflict, behavioral and licensing review.
+- Never merge moving upstream branch heads directly into master.
+- Record the source commit(s), upstream URL and relevant local adaptations.
+- Run affected build/tests before integrating.
+
+## Merge policy
+
+- Do not use force-push on shared branches.
+- Use squash or rebase according to the repository's configured policy while preserving attribution.
+- Require review for changes to boot, kernel, drivers, filesystems, cryptography, licensing, build pipelines and release infrastructure.
+- Keep master in a known buildable state. Prefer staging work on integration branches until CI and runtime gates are available.
