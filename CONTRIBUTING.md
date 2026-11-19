@@ -1,117 +1,55 @@
-# How To Contribute
+# Contributing
 
-> **English** | [中文](translations/zh-CN/CONTRIBUTING.md) | [Français](translations/fr-FR/CONTRIBUTING.md) | [Español](translations/es-ES/CONTRIBUTING.md) | [日本語](translations/ja-JP/CONTRIBUTING.md) | [العربية](translations/ar-MA/CONTRIBUTING.md) | [Українська](translations/uk-UA/CONTRIBUTING.md)
+This repository is an independent development fork with its own roadmap and contribution process. The product name currently used in development is provisional; see the project charter and trademark review note before public branding or distribution.
 
-LiberNT welcomes bug reports, tests, fixes, new features and documentation. This page explains how to send your work. The engineering rules every change follows are in [AGENTS.md](AGENTS.md), and they apply to human contributors and AI tools alike.
+## Contributor identity and privacy
 
-- [What To Do?](#what-to-do)
-- [How To Contribute?](#how-to-contribute)
-- [Copyright and Licences](#copyright-and-licences)
-- [Where To Start?](#where-to-start)
+- A public pseudonym or alias is accepted for Git author and committer names.
+- A GitHub noreply address or another valid public-facing address is accepted.
+- Do not impersonate another person or use an address you do not control.
+- Contributors must have the legal right to submit the material and must not knowingly submit third-party code without permission.
+- Do not publish passwords, private keys, access tokens, personal data or other secrets in commits or issues.
+- No Contributor License Agreement or copyright assignment is currently required by this repository. Any future change must be announced separately and require explicit agreement.
 
-**Legal notice:** If you have seen proprietary Microsoft Windows source code, your contribution won't be accepted because of potential copyright violation. Before contributing, you must affirm that the following is true:
->I hereby swear that I have not used nor seen the source code to any version of the Windows operating system
->nor any Microsoft product that may be related to the proposed project that is under a license incompatible
->with contribution to LiberNT, including but not limited to the leaked Windows NT 3.5, NT 4 and 2000 source code
->and the Windows Research Kernel.
+This policy applies to contributions submitted only to this repository. It does not change the rules of LiberNT, ReactOS, Wine or any other upstream project.
 
-LiberNT is built clean-room: from the Windows SDK and WDK headers, Windows 11 public symbols, Microsoft documentation and black-box runs on Windows 11. See [Sources of truth](AGENTS.md#sources-of-truth) for what may and may not be used.
+## Source and licensing rules
 
-## What To Do?
+- Preserve every inherited copyright, SPDX identifier and license notice.
+- Do not change the license of inherited files unless all relevant rights holders have granted that right.
+- Identify the upstream URL and immutable commit/tag for imported code.
+- Record local modifications and dependencies in the relevant provenance document.
+- Do not submit leaked Microsoft source code, proprietary source code obtained without permission, or code transcribed from decompiled/disassembled proprietary binaries.
+- Do not copy GPL-licensed Linux implementation code into this source tree.
+- Use published specifications, public SDK/WDK headers, public symbols, official documentation, compatible open-source code and lawful black-box testing.
+- Every new third-party dependency must pass the checklist in docs/third-party/INTEGRATION_CATALOG.md.
 
-### Report bugs
+## Engineering requirements
 
-Report bugs in [Issues](https://github.com/LiberNT/LiberNT/issues). Give the architecture (amd64, i386, arm64 or riscv64), the build type, the commit you built and the steps that lead to the problem. A debug log from the serial port helps a lot.
+Every change should:
+1. Solve one clearly stated problem.
+2. Identify the affected module, architecture and compatibility contract.
+3. Include a focused test or explain why a test is not yet possible.
+4. Build the affected target and relevant architecture.
+5. Include runtime/boot evidence for kernel, boot and driver changes.
+6. Compare observable Windows compatibility behavior against the documented Windows 11 reference when applicable.
+7. Document any ABI, structure-layout, synchronization, IRQL, locking or memory-ordering decision.
+8. Avoid unrelated refactoring and broad mechanical renames.
 
-### Fix bugs
+Kernel and driver changes require particular care. Follow the inherited engineering guidance in AGENTS.md, especially its clean-room rules, ABI evidence requirements, architecture-neutrality rules and memory-manager constraints.
 
-Fix the underlying behavior, not the symptom, and make the smallest correct change. A fix counts only after a real boot or test run shows it working.
+## Pull requests
 
-### Fix tests
+Use focused pull requests with:
+- a concise title and problem statement;
+- cause and implementation summary;
+- affected components and architectures;
+- exact build and test commands;
+- results and logs for relevant runtime tests;
+- third-party source/license information where applicable.
 
-Tests check LiberNT against Windows behavior. Many of them are not clean on Windows 11 either, so before changing LiberNT to satisfy a test, run the same test on Windows 11 and compare the results check by check. If Windows 11 fails a check too, the expectation is the bug. See [Testing against Windows 11](AGENTS.md#testing-against-windows-11).
+Do not claim a feature is Windows 11 compatible merely because it compiles or boots. State the tested behavior and known limitations.
 
-### Test LiberNT
+## Security reports
 
-Run LiberNT in a virtual machine or on real hardware and report what breaks. Real hardware matters most for drivers: a virtual machine proves only that a driver installs and loads.
-
-### Implement new things
-
-Windows 11 is the compatibility reference. Before starting a larger piece of work, ask in [Issues](https://github.com/LiberNT/LiberNT/issues) or on [Discord](https://discord.gg/BpcKg7FZ2) whether someone is already working on it.
-
-### Write documentation
-
-Guides and design notes go in the [Wiki](https://github.com/LiberNT/LiberNT/wiki). Respect [clean room reverse engineering] practices, and write only what the source code, the documentation or a test run shows.
-
-### Third-party code
-
-Components synchronised with Wine are listed in [media/doc/WINESYNC.txt](media/doc/WINESYNC.txt), and other third-party code in [media/doc/3rd Party Files.txt](media/doc/3rd%20Party%20Files.txt). Keep LiberNT changes to that code under `#ifdef __REACTOS__`, with the original code in the `#else` branch, so the next synchronisation keeps them.
-
-## How To Contribute?
-
-We recommend using English in issue reports and community discussions, to keep communication efficient. 建议在 Issue 报告和社区讨论中使用英语，以提高沟通效率。
-
-### Pull Requests
-
-Send your work as a [pull request] against the `master` branch. Pull requests let you tell others about changes you have pushed to a repository on GitHub. Once a pull request is opened, you can discuss and review the changes with the team and add follow-up commits before they are merged.
-
-Before you open it:
-
-- Build amd64, i386 and arm64, not only the architecture you work on.
-- Boot or run the tests that cover your change, and say in the pull request what you ran.
-- Keep architecture-specific code in the architecture layer. See [Architecture neutrality](AGENTS.md#architecture-neutrality).
-
-### Commit style
-
-Our commit style is defined in a __[commit template]__. Use it as a reference or turn it on using `git config commit.template .gitmessage`. This will set this template as an initial commit message for the new commits in your local repository. The full rules are in [Changes and commits](AGENTS.md#changes-and-commits).
-
-### Use of AI
-
-You may use AI tools. Tell us in the pull request which parts they helped with and how you tested them. AI-written code follows the same rules as any other code and is reviewed by a person.
-
-### Rules and Recommendations
-
-- *Use your __real name__ and __real email__.* We do not accept anonymous code contributions!
-  - Every commit that changes code or translations should have author's full legal name (in latin letters, diacritics allowed).
-  - It's recommended to have the same full name set in GitHub profile (in the [Name field here][GitHub Profile Settings]) that matches one specified in commits.
-- There is an exception for media changes, such as changes of art (wallpapers, themes, icons, sounds) and out-of-code documentation.
-  - In these specific cases it's allowed to use a nickname or alias as author's name, and it's recommended to have the same name set in GitHub profile (in the [Name field here][GitHub Profile Settings]) matching one specified in commits.
-- In any case the author must use a real e-mail address, this includes git commits (`user.email` setting) and GitHub [e-mail settings][GitHub Email Settings] - the checkbox "Keep my email addresses private" must be unchecked there.
-  - In order to *keep your privacy*, select appropriate "Primary email address" that will be applied to your commits in GitHub [e-mail settings][GitHub Email Settings].
-- *Ensure your contribution is properly described.* Include the relevant issue number if applicable.
-- *Put only related changes.* It will make reviewing easier as the reviewer needs to recall less information about the existing source code that is changed.
-- *Search for similar pull requests before submitting.* It may be that a similar pull request or issue was opened previously. Comment and review on that one instead.
-- *Keep your contribution small and focused on the topic.* Resist the temptation to fix unrelated issues as you come across them; open an issue for them instead.
-- *Respect our __[Coding Style]__.*
-- *Do not be afraid to ask questions.* Ask the team on [Discord](https://discord.gg/BpcKg7FZ2) or [Matrix](https://matrix.to/#/#libernt:matrix.org).
-
-## Copyright and Licences
-
-You keep the copyright on what you write. LiberNT has no copyright assignment and no contributor licence agreement.
-
-- New files start with the header shown in [Code style](AGENTS.md#code-style), with your name and e-mail in the `COPYRIGHT` line and an SPDX licence identifier.
-- When you make a major change to an existing file, you may add your own `COPYRIGHT` line under the existing ones.
-- Never remove or change an existing copyright or licence notice, and never edit the licence texts in the top level directory.
-- Keep the licence of the files you change. Code inherited from ReactOS keeps the licence stated in its header.
-- Never copy code whose licence is incompatible with the GNU GPL 3.0, and never copy GPL code from Linux.
-
-See [CREDITS.md](CREDITS.md) for the people behind LiberNT and ReactOS.
-
-## Where To Start?
-
-- Look at the open [Issues](https://github.com/LiberNT/LiberNT/issues).
-- Find a test that fails, compare it with Windows 11, and make it pass.
-- Read the [Wiki](https://github.com/LiberNT/LiberNT/wiki) for guides and design notes.
-- Ask for help on [Discord](https://discord.gg/BpcKg7FZ2) or [Matrix](https://matrix.to/#/#libernt:matrix.org).
-
-  [clean room reverse engineering]:                              https://en.wikipedia.org/wiki/Clean_room_design
-  [pull request]:                                                https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests
-  [GitHub Profile Settings]:                                     https://github.com/settings/profile
-  [GitHub Email Settings]:                                       https://github.com/settings/emails
-  [Coding Style]:                                                CODING_STYLE.md
-  [commit template]:                                             .gitmessage
-
-# See Also
-
-- [Rules for managing Pull Requests](PULL_REQUEST_MANAGEMENT.md)
-- [Code of conduct](CODE_OF_CONDUCT.md)
+Do not publish exploitable vulnerabilities, credentials or private security-sensitive details in public issues. Use the repository's configured private security reporting channel where available; otherwise contact the maintainers privately through a verified project contact.
