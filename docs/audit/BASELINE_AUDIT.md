@@ -49,6 +49,21 @@ The inspected GitHub Actions workflow includes:
 
 The workflow configures builds, builds external submodules, produces boot/install images, and runs the dependency checker. This is a useful inherited CI foundation. The workflow file was inspected, but this audit did not execute the workflow or verify that the current run is green. The commit-status query returned no status records; that response alone does not prove that no GitHub Actions run exists.
 
+
+## 3A. Root CMake and target integration details
+
+The root CMake file currently calls project(REACTOS), sets global C99/C++11 defaults, imports the inherited version/build-stamp machinery and defines __REACTOS__ globally. The target-side directory order is boot, bootloader, base, dll, submodules, drivers, HAL, SDK libraries, media, modules, ntos, subsystems and WPP; CI definitions and image/package finalization follow.
+
+This gives LiberNext a practical future integration point: one optional add_subdirectory(libernext) call in the target-side section after the inherited subsystem targets exist and before CI/package-finalization. The call must be guarded until a real LiberNext module is ready. No root CMake changes have been made in this audit branch.
+
+The inherited build uses global language defaults and global compile definitions in many places. New LiberNext modules should use target-scoped include directories, compile definitions and link dependencies. Do not globally rename ReactOS variables or __REACTOS__; those names are embedded in a large compatibility build graph.
+
+The existing application integration patterns were inspected in base/applications/notepad, base/applications/taskmgr and base/shell/explorer. They demonstrate the local add_executable, set_module_type, add_importlibs and add_cd_file conventions. The existing Explorer is an inherited shell, not yet the decision for LiberNext's final desktop.
+
+The NTOS CMake file explicitly requires NVS=ON and fails configuration if NVS is disabled. The legacy memory/cache-manager build path is retired. This makes preserving the existing NVS baseline a prerequisite for any meaningful kernel comparison.
+
+The configure script defaults to AMD64 + Clang + Debug + Ninja, requires RosBE, initializes the glmark2 submodule, and updates feeds unless --no-feeds-update is explicitly supplied. For the first clean baseline, record all feed/nested-submodule revisions and the toolchain versions; do not silently update feeds while trying to reproduce an earlier build.
+
 ## 4. External source feeds
 
 `feeds.conf.default` and `scripts/feeds` define a feed system which checks external source repositories out below `submodules/`. These are cloned source feeds rather than a single monolithic source tree.
