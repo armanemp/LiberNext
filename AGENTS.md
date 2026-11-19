@@ -1,3 +1,20 @@
+# LiberNext Repository Overlay
+
+> **Project status:** This repository is an independent development fork. "LiberNext" is a provisional working name pending trademark review. The inherited source tree and engineering guidance below originate from LiberNT/ReactOS.
+
+## Which project rules govern this repository?
+
+- Product direction, module ownership, roadmap and independent project decisions are defined in the documents under docs/project/, docs/architecture/, docs/roadmap/ and docs/engineering/.
+- This inherited AGENTS.md remains an engineering reference for the existing kernel, drivers, ABI, clean-room process and compatibility work. Its technical rules should be followed where they apply to inherited components.
+- References in the inherited guide to LiberNT describe the upstream source baseline and its existing implementation. They do not make this repository an official LiberNT project or transfer control of this fork's roadmap to upstream maintainers.
+- Do not remove inherited notices, change file licenses, or replace the existing ReactOS compatibility macro globally. Use a focused, tested migration plan for any identity/build-system change.
+- New product-owned modules belong under libernext/ and must follow docs/architecture/MODULE_BOUNDARIES.md.
+- Before adding third-party code, follow docs/licensing/PROVENANCE_AND_LICENSE_POLICY.md and docs/third-party/INTEGRATION_CATALOG.md.
+- The clean-room restrictions below remain mandatory: never use leaked or unlawfully obtained proprietary source code, and never copy Linux GPL implementation code into this tree.
+- The project name and brand must not be publicly promoted or used for distributed builds until the similarity concern described in TRADEMARK.md has been resolved through written permission or legal review.
+
+---
+
 # AGENTS.md
 
 This file introduces LiberNT and sets the working rules and engineering criteria for everyone who changes it: human contributors, AI agents and other automated tools. Start with the introduction; the rules follow it.
